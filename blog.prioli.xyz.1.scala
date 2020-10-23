@@ -8,8 +8,11 @@ import io.gatling.jdbc.Predef._
 class BlogPrioliXyz extends Simulation {
 
 	val httpProtocol = http
-		.baseUrl("https://blog.prioli.xyz")
-		.inferHtmlResources(WhiteList(""".*blog\.prioli\.xyz.*"""))
+                // Standard
+		.baseUrl("https://35.212.242.37")
+                // Premium
+                //.baseUrl("https://35.190.3.150")
+		.inferHtmlResources(WhiteList(""".*blog\.prioli\.xyz.*""",""".*35.212.242.37.*""",""".*35.190.3.150.*"""))
                 //, BlackList(""".*\.js""", """.*\.css""", """.*\.gif""", """.*\.jpeg""", """.*\.jpg""", """.*\.ico""", """.*\.woff""", """.*\.woff2""", """.*\.(t|o)tf""", """.*\.png""", """.*detectportal\.firefox\.com.*"""))
 		.acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
 		.acceptEncodingHeader("gzip, deflate")
@@ -45,7 +48,11 @@ class BlogPrioliXyz extends Simulation {
 		.exec(http("/")
 			.get("/")
 			.headers(headers_0))
+                .pause(6 seconds, 10 seconds)
+                .exec(http("/posts/gatling-load-testing-1/")
+                        .get("/posts/gatling-load-testing-1/")
+                        .headers(headers_0))
 
-	//setUp(scn.inject(atOnceUsers(100))).protocols(httpProtocol)
-        setUp(scn.inject(rampUsersPerSec(10) to 1000 during (10 minutes) randomized).protocols (httpProtocol))
+	//setUp(scn.inject(atOnceUsers(10))).protocols(httpProtocol)
+        setUp(scn.inject(rampUsersPerSec(1) to 30 during (10 minutes) randomized).protocols (httpProtocol))
 }
